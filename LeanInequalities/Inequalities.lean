@@ -18,6 +18,7 @@ theorem inequality_p1 (n : ℕ) (a b : Fin n → ℝ)
     (sum_eq : ∑ i, a i = ∑ i, b i) :
     ∑ i, (a i)^2 / (a i + b i) ≥ (∑ i, a i) / 2 := by sorry
 
+
 -- [Problem 2]
 -- For positive reals $a,b,c$, we have
 --     \[ \frac{a}{b+c} + \frac{b}{c+a} + \frac{c}{a+b} \geq \frac{3}{2}. \]
@@ -38,3 +39,32 @@ theorem inequality_p1 (n : ℕ) (a b : Fin n → ℝ)
 theorem inequality_p2 (a b c : ℝ)
     (ha : a > 0) (hb : b > 0) (hc : c > 0) :
     a / (b + c) + b / (c + a) + c / (a + b) ≥ 3 / 2 := by sorry
+
+
+-- [Problem 3]
+-- Let $x, y, z$ be real numbers greater than $1$ and such that $\frac{1}{x} + \frac{1}{y} + \frac{1}{z} = 2$.
+-- Prove that \[ \sqrt{x + y + z} \ge \sqrt{x-1} + \sqrt{y-1} + \sqrt{z-1}. \]
+
+-- [Solution 3]
+-- By the Cauchy-Schwarz Inequality, we have \[ (x+y+z) \left(\frac{x-1}{x} + \frac{y-1}{y} + \frac{z-1}{z} \right) \ge (\sqrt{x-1} + \sqrt{y-1} + \sqrt{z-1})^2. \]
+-- Note that $\frac{x-1}{x} + \frac{y-1}{y} + \frac{z-1}{z} = 3 - \frac{1}{x} - \frac{1}{y} - \frac{1}{z} = 1$
+-- so this yields $\sqrt{x + y + z} \ge \sqrt{x-1} + \sqrt{y-1} + \sqrt{z-1}$
+
+theorem inequality_p3 (x y z : ℝ)
+    (hx : x > 1) (hy : y > 1) (hz : z > 1)
+    (h : 1/x + 1/y + 1/z = 2) :
+  Real.sqrt (x + y + z) ≥ Real.sqrt (x - 1) + Real.sqrt (y - 1) + Real.sqrt (z - 1) := by sorry
+
+
+-- [Problem 4]
+-- If $a, b, c \in (0, 1)$. Prove that \[ \sqrt{abc} + \sqrt{(1-a)(1-b)(1-c)} < 1. \]
+
+-- [Solution 4]
+-- By the Cauchy-Schwarz Inequality, we have \[ (1-a+a)(1-b+b) \ge \left(\sqrt{(1-a)(1-b)}+\sqrt{ab}\right)^2 > (1-a)(1-b) + ab \]
+-- By Cauchy-Schwarz again, we have \[ 1 = (1-a+a)(1-b+b)(1-c+c) > ((1-a)(1-b)+ab)(1-c+c) \ge \sqrt{(1-a)(1-b)(1-c)} + \sqrt{abc} \]
+
+theorem inequality_p4 (a b c : ℝ)
+    (ha : 0 < a) (ha' : a < 1)
+    (hb : 0 < b) (hb' : b < 1)
+    (hc : 0 < c) (hc' : c < 1) :
+  Real.sqrt (a * b * c) + Real.sqrt ((1 - a) * (1 - b) * (1 - c)) < 1 := by sorry
