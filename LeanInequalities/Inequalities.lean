@@ -13,17 +13,8 @@ import Mathlib
 -- \[( (a_1+b_1) + (a_2+b_2) + \cdots (a_n+b_n))(\frac{a_1^2}{a_1 + b_1} + \frac{a_2^2}{a_2 + b_2} + \cdots + \frac{a_n^2}{a_n + b_n}) \geq (a_1 + a_2 + \cdots + a_n)^2  \]
 -- which is exactly Cauchy-Schwarz inequality.
 
-theorem inequality_2 (n : ℕ) (a : Fin 2 → ℝ) (ha : ∀ i, a i > 0) : ∑ i, √(a i) ^ 2 = ∑ i, a i := by
-  simp [Fin.sum_univ_two]
-  have h0 : a 0 > 0 := by exact ha 0
-  have h1 : a 1 > 0 := by exact ha 1
-  field_simp
-
-theorem inequality_n (n : ℕ) (a : Fin n → ℝ) (ha : ∀ i, a i > 0) : ∑ i, √(a i) ^ 2 = ∑ i, a i := by
-  congr!
-  rw [Real.sq_sqrt]
-
 theorem inequality_p1 (n : ℕ) (a b : Fin n → ℝ)
+    (hn : n > 0)
     (ha : ∀ i, a i > 0) (hb : ∀ i, b i > 0)
     (sum_eq : ∑ i, a i = ∑ i, b i) :
     ∑ i, (a i)^2 / (a i + b i) ≥ (∑ i, a i) / 2 := by
@@ -31,42 +22,34 @@ theorem inequality_p1 (n : ℕ) (a b : Fin n → ℝ)
     have h1 : (∑ i, (a i + b i)) * (∑ i, (a i)^2 / (a i + b i)) ≥ (∑ i, a i)^2 := by
       convert_to (∑ i, (√(a i + b i))^2) *
                (∑ i, (a i / √(a i + b i))^2) ≥
-               (∑ i, √(a i + b i) * a i / √(a i + b i))^2
+               (∑ i, √(a i + b i) * (a i / √(a i + b i)))^2
       · congr! with i1 h11 i2 h12
-        have hab : a i1 + b i1 > 0 := by
+        have hab1 : a i1 + b i1 > 0 := by
           exact Right.add_pos' (ha i1) (hb i1)
-        have hab : a i2 + b i2 > 0 := by
-          exact Right.add_pos' (ha i2) (hb i2)
         field_simp
+        have hab2 : a i2 + b i2 > 0 := by
+          exact Right.add_pos' (ha i2) (hb i2)
         field_simp
       · congr! with i
         have hab : a i + b i > 0 := by
           exact Right.add_pos' (ha i) (hb i)
         field_simp
 
-
-
-
-
-
-
-
-
-
-
-
+      apply Finset.sum_mul_sq_le_sq_mul_sq
 
     have h2 : ∑ i, (a i + b i) = ∑ i, a i + ∑ i, b i := by
       rw [Finset.sum_add_distrib]
     have h3 : ∑ i, a i + ∑ i, b i = 2 * ∑ i, a i := by
       linarith
 
-    have h4 : ∑ i, a i ≠ 0 := by
-      apply ne_of_gt
+    have h4 : ∑ i, a i > 0 := by
       apply Finset.sum_pos
       · intro i _
         exact ha i
-      · sorry
+      · have h_nonempty : Nonempty (Fin n) := by
+          apply Fin.pos_iff_nonempty.mp
+          omega
+        apply Finset.univ_nonempty
 
     have h5 : 2 * (∑ i, a i) * ∑ i, (a i)^2 / (a i + b i) ≥ (∑ i, a i) ^ 2 := by
       rw [h2] at h1
@@ -77,7 +60,9 @@ theorem inequality_p1 (n : ℕ) (a b : Fin n → ℝ)
       linarith
 
     have h7 :  ∑ i, (a i)^2 / (a i + b i) ≥ (∑ i, a i) / 2 := by
-      sorry
+      exact le_of_mul_le_mul_left h6 h4
+
+    apply h7
 
 -- [Problem 2]
 -- For positive reals $a,b,c$, we have
@@ -180,7 +165,9 @@ theorem inequality_p4 (a b c : ℝ)
     have h_aux : 1 - a + (a * b - b) = (1 - a) * (1 - b) := by
       ring
     rw [h_aux]
+
     apply mul_pos <;> linarith
+
     apply mul_nonneg <;> linarith
 
     have h_aux : 1 - a + (a * b - b) = (1 - a) * (1 - b) := by
