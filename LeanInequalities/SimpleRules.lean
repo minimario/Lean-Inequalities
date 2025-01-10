@@ -17,8 +17,18 @@ theorem p3 (a b n : ℝ) (hab: a ≤ b) (ha : a ≥ 0) (hn : n ≥ 1) :
     apply zero_le_one
     exact hn
 
+theorem xx : (-3 + √8)^2 + 6 * (-3 + √8) + 1 = 0 := by
+  ring
+  field_simp
+
+
+
+
+
 theorem p4 (a b c : ℝ) (hb: b ≠ 0) (habc: a / b = c) :
   a = b * c := by
+
+
   have h1 : (a / b) * b = c * b := by rw [habc]
   have h2 : (a / b) * b = a := by
     exact div_mul_cancel₀ a hb

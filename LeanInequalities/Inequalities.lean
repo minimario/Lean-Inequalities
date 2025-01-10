@@ -1,3 +1,4 @@
+
 import Mathlib
 
 -- [Problem 1]
@@ -23,7 +24,8 @@ theorem inequality_p1 (n : ℕ) (a b : Fin n → ℝ)
       convert_to (∑ i, (√(a i + b i))^2) *
                (∑ i, (a i / √(a i + b i))^2) ≥
                (∑ i, √(a i + b i) * (a i / √(a i + b i)))^2
-      · congr! with i1 h11 i2 h12
+      ·
+        congr! with i1 h11 i2 h12
         have hab1 : a i1 + b i1 > 0 := by
           exact Right.add_pos' (ha i1) (hb i1)
         field_simp
@@ -60,6 +62,7 @@ theorem inequality_p1 (n : ℕ) (a b : Fin n → ℝ)
       linarith
 
     have h7 :  ∑ i, (a i)^2 / (a i + b i) ≥ (∑ i, a i) / 2 := by
+
       exact le_of_mul_le_mul_left h6 h4
 
     apply h7
@@ -139,59 +142,116 @@ theorem inequality_p3 (x y z : ℝ)
 -- By the Cauchy-Schwarz Inequality, we have \[ (1-a+a)(1-b+b) \ge \left(\sqrt{(1-a)(1-b)}+\sqrt{ab}\right)^2 > (1-a)(1-b) + ab \]
 -- By Cauchy-Schwarz again, we have \[ 1 = (1-a+a)(1-b+b)(1-c+c) > ((1-a)(1-b)+ab)(1-c+c) \ge \sqrt{(1-a)(1-b)(1-c)} + \sqrt{abc} \]
 
-theorem inequality_p4 (a b c : ℝ)
-    (ha : 0 < a) (ha' : a < 1)
-    (hb : 0 < b) (hb' : b < 1)
-    (hc : 0 < c) (hc' : c < 1) :
-  Real.sqrt (a * b * c) + Real.sqrt ((1 - a) * (1 - b) * (1 - c)) < 1 := by
+-- theorem inequality_p4 (a b c : ℝ)
+--     (ha : 0 < a) (ha' : a < 1)
+--     (hb : 0 < b) (hb' : b < 1) :
+--   (√((1-a)*(1-b)) + √(a*b))^2 > (1-a) * (1-b) + a * b := by sorry
 
-  have h1 : ((1 - a) + a) * ((1 - b) + b) ≥ (√((1-a)*(1-b))+√(a*b))^2 := by
-    convert_to (∑ i : Fin 2, (![√(1-a), √a] i)^2) * (∑ i : Fin 2, (![√(1-b), √b] i)^2) ≥ (∑ i : Fin 2, ![√(1-a), √a] i * (![√(1-b), √b] i))^2
-    · simp [Fin.sum_univ_two]
-      have ha: 1 - a ≥ 0 := by linarith
-      have hb: 1 - b ≥ 0 := by linarith
-      field_simp
-    · simp [Fin.sum_univ_two]
-      have ha: 1 - a ≥ 0 := by linarith
-      field_simp
-    apply Finset.sum_mul_sq_le_sq_mul_sq
-
-  have h2 : (√((1-a)*(1-b)) + √(a*b))^2 > (1-a) * (1-b) + a * b := by
-    ring
-    rw [Real.sq_sqrt, Real.sq_sqrt]
+theorem inequality_test (a b : ℝ)
+    (ha : 0 < a) (hb : 0 < b):
+  (√a + √(a*b))^2 > a + a * b := by
     ring
     field_simp
     ring
-    have h_aux : 1 - a + (a * b - b) = (1 - a) * (1 - b) := by
-      ring
-    rw [h_aux]
+    field_simp
 
+theorem inequality_test' (a b : ℝ)
+    (ha : 0 < a) (ha' : a < 1) (hb : b < 1):
+  (√(1-a) + √(a*(1-b)))^2 > 1 - a + a * (1-b) := by
+  have ha'' : 1 - a > 0 := by linarith
+  have hab : a * (1 - b) > 0 := by
     apply mul_pos <;> linarith
+  have hab' : a - a * b > 0 := by
+    linarith
+  ring
+  field_simp
+  ring
+  field_simp
 
-    apply mul_nonneg <;> linarith
 
-    have h_aux : 1 - a + (a * b - b) = (1 - a) * (1 - b) := by
-      ring
-    rw [h_aux]
-    apply mul_nonneg <;> linarith
+-- theorem inequality_p4 (a b c : ℝ)
+--     (ha : 0 < a) (ha' : a < 1)
+--     (hb : 0 < b) (hb' : b < 1)
+--     (hc : 0 < c) (hc' : c < 1) :
+--   Real.sqrt (a * b * c) + Real.sqrt ((1 - a) * (1 - b) * (1 - c)) < 1 := by
 
-  have h3 : ((1-a)*(1-b)+a*b)*(1-c+c) ≥ (√((1-a)*(1-b)*(1-c)) + √(a*b*c))^2 := by
-    convert_to (∑ i : Fin 2, (![√((1-a)*(1-b)), √(a*b)] i)^2) * (∑ i : Fin 2, (![√(1-c), √c] i)^2) ≥ (∑ i : Fin 2, ![√((1-a)*(1-b)), √(a*b)] i * (![√(1-c), √c] i))^2
+
+--   have h1 : ((1 - a) + a) * ((1 - b) + b) ≥ (√((1-a)*(1-b))+√(a*b))^2 := by
+--     convert_to (∑ i : Fin 2, (![√(1-a), √a] i)^2) * (∑ i : Fin 2, (![√(1-b), √b] i)^2) ≥ (∑ i : Fin 2, ![√(1-a), √a] i * (![√(1-b), √b] i))^2
+--     · simp [Fin.sum_univ_two]
+--       have ha: 1 - a ≥ 0 := by linarith
+--       have hb: 1 - b ≥ 0 := by linarith
+--       field_simp
+--     · simp [Fin.sum_univ_two]
+--       have ha: 1 - a ≥ 0 := by linarith
+--       field_simp
+--     apply Finset.sum_mul_sq_le_sq_mul_sq
+
+--   have h2 : (√((1-a)*(1-b)) + √(a*b))^2 > (1-a) * (1-b) + a * b := by
+--     ring
+--     rw [Real.sq_sqrt, Real.sq_sqrt]
+--     ring
+--     field_simp
+--     ring
+--     have h_aux : 1 - a + (a * b - b) = (1 - a) * (1 - b) := by
+--       ring
+--     rw [h_aux]
+
+--     apply mul_pos <;> linarith
+
+--     apply mul_nonneg <;> linarith
+
+--     have h_aux : 1 - a + (a * b - b) = (1 - a) * (1 - b) := by
+--       ring
+--     rw [h_aux]
+--     apply mul_nonneg <;> linarith
+
+--   have h3 : ((1-a)*(1-b)+a*b)*(1-c+c) ≥ (√((1-a)*(1-b)*(1-c)) + √(a*b*c))^2 := by
+--     convert_to (∑ i : Fin 2, (![√((1-a)*(1-b)), √(a*b)] i)^2) * (∑ i : Fin 2, (![√(1-c), √c] i)^2) ≥ (∑ i : Fin 2, ![√((1-a)*(1-b)), √(a*b)] i * (![√(1-c), √c] i))^2
+--     · simp [Fin.sum_univ_two]
+--       have hab: (1-a)*(1-b) ≥ 0 := by
+--         apply mul_nonneg <;> linarith
+--       have hc : 1 - c ≥ 0 := by linarith
+--       field_simp
+--       ring
+--       field_simp
+--     · simp [Fin.sum_univ_two]
+--       have hc : 1 - c ≥ 0 := by linarith
+--       field_simp
+--     apply Finset.sum_mul_sq_le_sq_mul_sq
+
+--   rw [← sq_lt_one_iff]
+--   linarith
+
+--   have h4 : √(a*b*c) >= 0 := by field_simp
+--   have h5 : √((1 - a) * (1 - b) * (1 - c)) ≥ 0 := by field_simp
+--   linarith
+
+-- theorem inequality_p5 (a b x y : ℝ)
+--   (ha : a > 0) (hb: b > 0) (hx : x > 0) (hy : y > 0) :
+--   a^2 / x + b^2 / y ≥ (a+b)^2 / (x+y) := by
+--   sorry
+
+#print div_le_iff₀
+
+theorem inequality_p5 (a b x y : ℝ)
+  (ha : a > 0) (hb: b > 0) (hx : x > 0) (hy : y > 0) :
+  a^2 / x + b^2 / y ≥ (a+b)^2 / (x+y) := by
+  have h1 : (x + y)*(a^2/x + b^2/y) ≥ (a + b)^2 := by
+    convert_to (∑ i : Fin 2, (![a/√x, b/√y] i)^2) *
+               (∑ i : Fin 2, (![√x, √y] i)^2) ≥
+               (∑ i : Fin 2, ![a/√x, b/√y] i * ![√x, √y] i)^2
     · simp [Fin.sum_univ_two]
-      have hab: (1-a)*(1-b) ≥ 0 := by
-        apply mul_nonneg <;> linarith
-      have hc : 1 - c ≥ 0 := by linarith
       field_simp
       ring
-      field_simp
     · simp [Fin.sum_univ_two]
-      have hc : 1 - c ≥ 0 := by linarith
       field_simp
     apply Finset.sum_mul_sq_le_sq_mul_sq
+  have hxy : x + y > 0 := add_pos hx hy
 
-  rw [← sq_lt_one_iff]
-  linarith
+  exact (div_le_iff₀' hxy).2 h1
 
-  have h4 : √(a*b*c) >= 0 := by field_simp
-  have h5 : √((1 - a) * (1 - b) * (1 - c)) ≥ 0 := by field_simp
-  linarith
+
+  exact (div_le_iff₀' hxy).mpr h1
+
+  field_simp [hxy]
